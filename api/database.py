@@ -6,9 +6,12 @@ def create_db():
     cursor = db.cursor()
     table_create_script = [
         """
-            CREATE TABLE config (
-                key STRING NOT NULL PRIMARY KEY,
-                value STRING
+            create table config
+            (
+                key   string
+                    constraint settings_pk
+                        primary key,
+                value string
             );
         """,
         """
@@ -24,7 +27,7 @@ def create_db():
     db.close()
 
 
-def read_config(key):
+def get_config(key):
     db = sqlite3.connect("db.sqlite")
     cursor = db.cursor()
     cursor.execute(f"SELECT value FROM config WHERE key = '{key}'")
@@ -33,7 +36,7 @@ def read_config(key):
     return config
 
 
-def update_config(key, value):
+def set_config(key, value):
     db = sqlite3.connect("db.sqlite")
     cursor = db.cursor()
     cursor.execute(f"UPDATE config SET value = '{value}' WHERE key = '{key}'")
