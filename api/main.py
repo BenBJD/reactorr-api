@@ -22,23 +22,39 @@ config = {
 }
 
 
-@app.get("/{indexer}/search")
-async def get_users(indexer: str, category:int, q:str):
+@app.get("/search")
+async def get_users(indexer: str, category: int, q: str):
     params = {
         "apikey": config["jackett_apikey"],
         "q": q,
         "cat": category,
         "t": "search"
     }
-    results = requests.request("get", (config["jackett_url"] + f"/api/v2.0/indexers/{indexer}/results/torznab/api"), params=params)
+    results = requests.request(
+        "get", (config["jackett_url"] + f"/api/v2.0/indexers/{indexer}/results/torznab/api"), params=params)
     return JSONResponse(xmltojson.parse_results(results.content))
 
 
-@app.get("/{indexer}/categories")
-async def get_categories(indexer: str):
+@app.get("/indexers")
+async def get_indexers():
     params = {
         "apikey": config["jackett_apikey"],
-        "t": "caps"
+        "t": "indexers",
+        "configured": "true"
     }
-    categories = requests.request("get", (config["jackett_url"] + f"/api/v2.0/indexers/{indexer}/results/torznab/api"), params=params)
-    return JSONResponse(xmltojson.parse_categories(categories.content))
+    indexers = requests.request(
+        "get", config["jackett_url"] + f"/api/v2.0/indexers/all/results/torznab/api", params=params)
+    return JSONResponse(xmltojson.parse_indexers(indexers.content))
+
+
+@app.get("/config")
+async def get_config(key: str):
+    config = database.get_config(key)
+    print(config)
+    return config
+
+
+@app.post("/config")
+async def set_config(key: str, value: str):
+    database.set_config(key, value)
+    return "success"
