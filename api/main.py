@@ -30,6 +30,7 @@ async def get_users(indexer: str, category: int, q: str):
         "cat": category,
         "t": "search"
     }
+    database.add_recent(q)
     results = requests.request(
         "get", (config["jackett_url"] + f"/api/v2.0/indexers/{indexer}/results/torznab/api"), params=params)
     return JSONResponse(xmltojson.parse_results(results.content))
@@ -45,6 +46,18 @@ async def get_indexers():
     indexers = requests.request(
         "get", config["jackett_url"] + f"/api/v2.0/indexers/all/results/torznab/api", params=params)
     return JSONResponse(xmltojson.parse_indexers(indexers.content))
+
+
+@app.get("/recents")
+async def get_recents(number: int):
+    recents = database.get_recents(number)
+    return recents
+
+
+@app.post("/recents")
+async def remove_recents(id: int, all: bool):
+    database.remove_recent(id, all)
+    return "success"
 
 
 @app.get("/config")
