@@ -11,6 +11,7 @@ if not os.path.exists("db.sqlite"):
     database.create_db()
     database.set_config("jackett_url", input("Enter Jackett URL: "))
     database.set_config("jackett_apikey", input("Enter Jackett API key: "))
+    database.add_recent("Recent searches go here")
     print("Done!")
 else:
     pass
