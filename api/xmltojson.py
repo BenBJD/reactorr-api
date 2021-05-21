@@ -1,9 +1,7 @@
 import xml.etree.ElementTree as ET
-import json
 
 # There MUST be a nicer way to convert xml to json
 # Converts the xml results from torznab into nice friendly json
-
 
 def parse_results(xml):
     root = ET.fromstring(xml)

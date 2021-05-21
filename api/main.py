@@ -6,14 +6,16 @@ import os.path
 from api import database, xmltojson
 
 
-app = FastAPI()
-
-
 if not os.path.exists("db.sqlite"):
-    print("No database detected - initialising")
+    print("No database detected - Running setup.py")
     database.create_db()
+    database.set_config("jackett_url", input("Enter Jackett URL: "))
+    database.set_config("jackett_apikey", input("Enter Jackett API key: "))
+    print("Done!")
 else:
     pass
+
+app = FastAPI()
 
 
 global config
